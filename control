@@ -1,0 +1,8 @@
+Package: com.dgh0st.systeminfowidget
+Name: SystemInfoWidget
+Version: 0.0.1
+Architecture: iphoneos-arm
+Description: System Info Widget that displays battery and storage space
+Maintainer: DGh0st <deeppwnage@yahoo.com>
+Author: DGh0st <deeppwnage@yahoo.com>
+Section: Addons (Today Widget)
