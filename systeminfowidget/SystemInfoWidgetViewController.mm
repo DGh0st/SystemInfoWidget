@@ -9,7 +9,7 @@
 +(id)systemYellowColor;
 +(id)systemDarkRedColor;
 +(id)systemDarkGreenColor;
-+(id)systemGrayColor;
++(id)systemMidGrayColor;
 @end
 
 @interface NCWidgetController (SIPrivate)
@@ -25,7 +25,6 @@
     UILabel *batteryLabelTitle = [[UILabel alloc] init];
     batteryLabelTitle.text = NSLocalizedString(@"Battery", @"");
     batteryLabelTitle.textAlignment = NSTextAlignmentLeft;
-    batteryLabelTitle.textColor = [UIColor blackColor];
     batteryLabelTitle.numberOfLines = 1;
     batteryLabelTitle.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     [self.view addSubview:batteryLabelTitle];
@@ -35,13 +34,12 @@
 
     self.batteryLabelPercentage = [[UILabel alloc] init];
     self.batteryLabelPercentage.textAlignment = NSTextAlignmentRight;
-    self.batteryLabelPercentage.textColor = [UIColor blackColor];
     self.batteryLabelPercentage.numberOfLines = 1;
     self.batteryLabelPercentage.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     [self.view addSubview:self.batteryLabelPercentage];
 
     UIView *batteryBarBackground = [[UIView alloc] init];
-    batteryBarBackground.backgroundColor = [UIColor systemGrayColor];
+    batteryBarBackground.backgroundColor = [UIColor systemMidGrayColor];
     batteryBarBackground.layer.cornerRadius = 8.0;
     [self.view addSubview:batteryBarBackground];
 
@@ -54,14 +52,12 @@
     UILabel *storageLabelTitle = [[UILabel alloc] init];
     storageLabelTitle.text = NSLocalizedString(@"Storage", @"");
     storageLabelTitle.textAlignment = NSTextAlignmentLeft;
-    storageLabelTitle.textColor = [UIColor blackColor];
     storageLabelTitle.numberOfLines = 1;
     storageLabelTitle.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     [self.view addSubview:storageLabelTitle];
 
     self.storageSpaceLabel = [[UILabel alloc] init];
     self.storageSpaceLabel.textAlignment = NSTextAlignmentLeft;
-    self.storageSpaceLabel.textColor = [UIColor blackColor];
     self.storageSpaceLabel.numberOfLines = 1;
     self.storageSpaceLabel.font = [UIFont preferredFontForTextStyle:UIFontTextStyleSubheadline];
     [self.view addSubview:self.storageSpaceLabel];
@@ -85,13 +81,13 @@
     // setup constraints for battery information UI
     batteryLabelTitle.translatesAutoresizingMaskIntoConstraints = NO;
     [NSLayoutConstraint constraintWithItem:batteryLabelTitle attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:16].active = YES;
-    [NSLayoutConstraint constraintWithItem:batteryLabelTitle attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:8].active = YES;
+    [NSLayoutConstraint constraintWithItem:batteryLabelTitle attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:6].active = YES;
     [NSLayoutConstraint constraintWithItem:batteryLabelTitle attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.batteryLabelPercentage attribute:NSLayoutAttributeLeft multiplier:1 constant:8].active = YES;
     [NSLayoutConstraint constraintWithItem:batteryLabelTitle attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:1 constant:16].active = YES;
 
     self.batteryLabelPercentage.translatesAutoresizingMaskIntoConstraints = NO;
     [NSLayoutConstraint constraintWithItem:self.batteryLabelPercentage attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:batteryLabelTitle attribute:NSLayoutAttributeRight multiplier:1 constant:8].active = YES;
-    [NSLayoutConstraint constraintWithItem:self.batteryLabelPercentage attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:8].active = YES;
+    [NSLayoutConstraint constraintWithItem:self.batteryLabelPercentage attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeTop multiplier:1 constant:6].active = YES;
     [NSLayoutConstraint constraintWithItem:self.batteryLabelPercentage attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:-16].active = YES;
     [NSLayoutConstraint constraintWithItem:self.batteryLabelPercentage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:1 constant:16].active= YES;
 
@@ -104,19 +100,20 @@
     self.batteryBarPercentage.translatesAutoresizingMaskIntoConstraints = NO;
     [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeLeft multiplier:1 constant:0].active = YES;
     [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeTop multiplier:1 constant:0].active = YES;
-    [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeWidth multiplier:device.batteryLevel constant:0].active = YES;
+    self.batteryBarPercentageConstraint = [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeWidth multiplier:device.batteryLevel constant:0];
+    self.batteryBarPercentageConstraint.active = YES;
     [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeHeight multiplier:1 constant:0].active= YES;
 
     // setup constraints for storage space information UI
     storageLabelTitle.translatesAutoresizingMaskIntoConstraints = NO;
     [NSLayoutConstraint constraintWithItem:storageLabelTitle attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeLeft multiplier:1 constant:16].active = YES;
-    [NSLayoutConstraint constraintWithItem:storageLabelTitle attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeBottom multiplier:1 constant:8].active = YES;
+    [NSLayoutConstraint constraintWithItem:storageLabelTitle attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeBottom multiplier:1 constant:6].active = YES;
     [NSLayoutConstraint constraintWithItem:storageLabelTitle attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:self.storageSpaceLabel attribute:NSLayoutAttributeLeft multiplier:1 constant:8].active = YES;
     [NSLayoutConstraint constraintWithItem:storageLabelTitle attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:1 constant:16].active = YES;
 
     self.storageSpaceLabel.translatesAutoresizingMaskIntoConstraints = NO;
     [NSLayoutConstraint constraintWithItem:self.storageSpaceLabel attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationGreaterThanOrEqual toItem:storageLabelTitle attribute:NSLayoutAttributeRight multiplier:1 constant:8].active = YES;
-    [NSLayoutConstraint constraintWithItem:self.storageSpaceLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeBottom multiplier:1 constant:8].active = YES;
+    [NSLayoutConstraint constraintWithItem:self.storageSpaceLabel attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:batteryBarBackground attribute:NSLayoutAttributeBottom multiplier:1 constant:6].active = YES;
     [NSLayoutConstraint constraintWithItem:self.storageSpaceLabel attribute:NSLayoutAttributeRight relatedBy:NSLayoutRelationEqual toItem:self.view attribute:NSLayoutAttributeRight multiplier:1 constant:-16].active = YES;
     [NSLayoutConstraint constraintWithItem:self.storageSpaceLabel attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationLessThanOrEqual toItem:self.view attribute:NSLayoutAttributeHeight multiplier:1 constant:16].active= YES;
 
@@ -130,7 +127,8 @@
     self.storageSpaceBarPercentage.translatesAutoresizingMaskIntoConstraints = NO;
     [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeLeft relatedBy:NSLayoutRelationEqual toItem:storageSpaceBackground attribute:NSLayoutAttributeLeft multiplier:1 constant:0].active = YES;
     [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeTop relatedBy:NSLayoutRelationEqual toItem:storageSpaceBackground attribute:NSLayoutAttributeTop multiplier:1 constant:0].active = YES;
-    [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:storageSpaceBackground attribute:NSLayoutAttributeWidth multiplier:storageSpacePercentage constant:0].active = YES;
+    self.storageSpaceBarPercentageConstraint = [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:storageSpaceBackground attribute:NSLayoutAttributeWidth multiplier:storageSpacePercentage constant:0];
+    self.storageSpaceBarPercentageConstraint.active = YES;
     [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:storageSpaceBackground attribute:NSLayoutAttributeHeight multiplier:1 constant:0].active= YES;
 
     [batteryLabelTitle release];
@@ -163,7 +161,10 @@
     else
         color = [UIColor systemDarkGreenColor];
     self.batteryBarPercentage.backgroundColor = color;
-    [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.batteryBarPercentage.superview attribute:NSLayoutAttributeWidth multiplier:newLevel / 100.0 constant:0].active = YES;
+    self.batteryBarPercentageConstraint.active = NO;
+    self.batteryBarPercentageConstraint = [NSLayoutConstraint constraintWithItem:self.batteryBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.batteryBarPercentage.superview attribute:NSLayoutAttributeWidth multiplier:newLevel / 100.0 constant:0];
+    self.batteryBarPercentageConstraint.active = YES;
+    [self.view setNeedsLayout];
 }
 
 // storage percentage related logic copied from https://github.com/Shmoopi/iOS-System-Services/blob/master/System%20Services/Utilities/SSDiskInfo.m
@@ -230,7 +231,10 @@
     CGFloat storageSpacePercentage = [self storagePercentage];
     if (storageSpacePercentage < 0.0)
         storageSpacePercentage = 1.0;
-    [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.storageSpaceBarPercentage.superview attribute:NSLayoutAttributeWidth multiplier:storageSpacePercentage constant:0].active = YES;
+    self.storageSpaceBarPercentageConstraint.active = NO;
+    self.storageSpaceBarPercentageConstraint = [NSLayoutConstraint constraintWithItem:self.storageSpaceBarPercentage attribute:NSLayoutAttributeWidth relatedBy:NSLayoutRelationEqual toItem:self.storageSpaceBarPercentage.superview attribute:NSLayoutAttributeWidth multiplier:storageSpacePercentage constant:0];
+    self.storageSpaceBarPercentageConstraint.active = YES;
+    [self.view setNeedsLayout];
 }
 
 -(void)dealloc {
